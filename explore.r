@@ -14,6 +14,9 @@ names(flights)
 
 feb 	<- 	filter(flights, month==2, day==8)
 winter 	<- 	filter(flights, month==1 | month==2 | month==3)
+winter1	<-	filter(flights, month==c(1,2,3))
+
+all.equal(winter, winter1)
 
 # De Morgan's law
 # 	!(x & y) is same as !x | !y
