@@ -89,3 +89,20 @@ parse_datetime()
 parse_time()
 parse_date()
 
+
+# tweaking the type of the x and y columns 
+# you use col_xyz() when you want to tell readr how to load the data
+challenge <- read_csv(readr_example('challenge.csv'),
+					  col_types = cols(
+									   x = col_double(),
+									   y = col_date()
+									   ))
+
+challenge1 <- read_csv(readr_example('challenge.csv'),
+					   guess_max = 1001)
+
+# first read as character vector and change column type using 'type_convert' function!
+challenge2 <- read_csv(readr_example('challenge.csv'),
+					   col_types = cols(.default = col_character()))
+
+type_convert(challenge2)
