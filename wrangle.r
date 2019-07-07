@@ -18,9 +18,8 @@ tb <- tibble(
 			 `200` 	= 'number'
 			 )
 
+# does not work!
 tb <- tb %>% rename(tb, '`200`', 'renamed')
-
-tb
 
 flights %>%
 	View()
@@ -31,6 +30,13 @@ df <- tibble(
 			 x = runif(5),
 			 y = rnorm(5)
 			 )
+
+# UNIFORM DISTRIBUTION:		every outcome is equally likely, like a dice
+
+# runif(n, min=0, max=1) 	arguments
+# runif(n)					distribute n random numbers between 0 and 1
+# runif(n, -5, 5)			distribute n random numbers between -5 and 5
+
 df$x			# extract by name
 df[['x']]		# extract by name
 df[[1]]			# extract by position
@@ -106,3 +112,51 @@ challenge2 <- read_csv(readr_example('challenge.csv'),
 					   col_types = cols(.default = col_character()))
 
 type_convert(challenge2)
+
+#table4a <- tribble(
+#				  ~country, ~`1999`, ~`2000`,
+#				  'Afghan', 1, 3,
+#				  'Brazil', 2, 4,
+#				  'China', 3, 5
+#				  )
+
+table4a
+table4b
+
+# Gather
+
+tidy4a <- table4a %>%
+	gather(`1999`, `2000`, key = 'year', value = 'cases')
+
+tidy4b <- table4b %>%
+	gather(`1999`, `2000`, key = 'year', value = 'popul')
+
+left_join(tidy4a, tidy4b)
+
+table2
+
+spread(table2, key=type, value=count)
+
+people <- tribble(
+	~name, 				 ~key, 		~value,
+	#-----------------|--------|------
+	"Phillip Woods",	 "age", 	45,
+	"Phillip Woods",	 "height", 	186,
+	"Phillip Woods",	 "age", 	50,
+	"Jessica Cordero",	 "age", 	37,
+	"Jessica Cordero",	 "height",  156
+)
+
+people
+
+# gives error because of 1st and 3rd row (must be unique)
+spread(people, key, value)
+
+preg <- tribble(
+	~pregnant, ~male, ~female,
+	"yes", 		NA, 	10,
+	"no", 		20, 	12
+)
+
+preg %>%
+	gather(male, female, key = sex, value='male')
