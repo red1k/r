@@ -160,3 +160,23 @@ preg <- tribble(
 
 preg %>%
 	gather(male, female, key = sex, value='male')
+
+# pulls apart one column into multiple columns
+# default -> it sees non alphanumeric characters (not letter and not number)
+table3 %>% separate(rate, into = c('cases', 'population'))
+table3 %>% separate(rate, into = c('cases', 'population'), sep = '/')
+table3 %>% separate(rate, into = c('cases', 'population'), sep = '/', convert=TRUE)
+
+# will interpret integer as position to split at. 1 left, -1 right
+
+table3 <- table3 %>% separate(year, into = c('century', 'year'), sep = 2)
+
+# combines multiple columns to one column
+# 1st argument is which column
+# columns to combine
+
+blah <- table3 %>% unite(new, century, year, sep="")
+
+parse_integer(blah$new)
+blah
+type_convert(blah$new)
