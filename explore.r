@@ -98,3 +98,58 @@ delays <- flights %>%
 ggplot(delays, aes(x=dist, y=delay)) +
 	geom_point(aes(size=count), alpha=1/3) +
 	geom_smooth(se=FALSE)
+
+glimpse(flights)
+
+# SELECT
+
+# hide columns
+select(flights, -year, -month)
+
+# hide range of columns
+select(flights, -(year:day))
+
+# hide any columns with matching name
+select(flights, -contains('time'))
+
+# pick multiple columns
+cols <- c('carrier', 'flight')
+select(flights, one_of(cols))
+
+# move column to back of the table
+select(flights, -year, year)
+
+# identify unique values
+flights %>% select(carrier) %>% unique()
+flights %>% select(carrier) %>% distinct()
+
+# rename columns names
+rename(flights, tails = tailnum)
+flights %>% rename(tails = tailnum)
+
+# FILTER
+
+filter(flights, between(month, 2, 5))
+filter(flights, !is.na(dep_time))
+
+# filters row by position
+slice(flights, 100:105)
+
+count(flights, month)
+count(flights, month, sort = TRUE)
+
+flights %>%
+    group_by(month) %>%
+    summarise(count = n()) %>%
+    arrange(desc(count))
+
+# below three code has same result
+flights %>%
+    group_by(month) %>%
+    summarise(sums = sum(distance))
+
+flights %>%
+    group_by(month) %>%
+    tally(wt = distance)
+
+flights %>% count(month, wt = distance)
