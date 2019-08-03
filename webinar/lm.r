@@ -48,3 +48,6 @@ ggplot(airquality, aes(x = Solar.R, y = Ozone)) +
     geom_point(aes(color = Month)) +
     geom_smooth(method = 'lm', se = FALSE, color = 'red') +
     geom_hline(yintercept = mean_ozone, color = 'green')
+
+# some cool plot i do not understand yet
+coplot(Ozone~Solar.R | Wind, panel = panel.smooth, airquality)
