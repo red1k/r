@@ -70,3 +70,28 @@ flights %>%
 
 # randomly sample a fixed number of rows, without replacement
 flights %>% sample_n(5)
+
+
+# MUTATE AND SUMMARISE FUNCTION 'bit advanced'
+
+flights
+summary(flights)
+
+# Show sum of NAs each column
+flights %>%
+    map_df(~sum(is.na(.)))
+
+flights %>%
+    summarise_all(mean)
+    #summarise_all(mean, na.rm = TRUE)
+    #summarise_all(list(mean, max, min), na.rm = TRUE)
+
+flights %>%
+    summarise_if(is.numeric, max)
+
+flights %>%
+	summarise_at(vars(starts_with("s")), mean)
+
+flights %>%
+	mutate_at(vars(one_of(month.abb[1:3])), mean_val = mean)
+
