@@ -28,7 +28,7 @@ summary(gss_cat)
 gss_cat %>%
     count(race)
 
-# without levels that have no value
+# cannot see the levels that have no value
 ggplot(gss_cat, aes(race)) + geom_bar()
 
 # see all the levels
@@ -43,7 +43,7 @@ gss_cat %>%
 gss_cat %>%
     count(rincome)
 
-ggplot(gss_cat, aes(rincome)) + geom_bar()
+ggplot(gss_cat, aes(rincome)) + geom_bar() + coord_flip()
 
 relig <- gss_cat %>%
     group_by(relig) %>%
