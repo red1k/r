@@ -45,6 +45,10 @@ gap_plot <- function(data) {
         )
 }
 
+# you can replace scale_y_con... and sclae_x_con... to xlim and ylim
+# ylim(20, 85) +
+# xlim(200, 60000) +
+
 gapminder %>%
     filter(country == 'New Zealand') %>%
     gap_plot()
@@ -55,7 +59,8 @@ gapminder3 <- gapminder %>%
 by_year <- gapminder3 %>%
     group_split(year)
 
-year <- gapminder3 %>% group_keys() %>% pull(year)
+#year <- gapminder3 %>% group_keys() %>% pull()
+year  <- gapminder3 %>% group_keys() %>% pull(year)
 title <- paste0('Year: ', year)
 plots <- map2(by_year, title, ~gap_plot(.x))
 paths <- paste0(year, '.png')
