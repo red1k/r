@@ -17,14 +17,15 @@ aggregate(arr_delay ~ dest, flights, mean)
 # summarise multiple columns
 flights %>%
     group_by(carrier) %>%
-    summarise_each(funs(mean(., na.rm = TRUE)), air_time, distance) %>%
+    summarise_each(list(~mean(., na.rm = TRUE)), air_time, distance) %>%
+    #summarise_each(funs(mean(., na.rm = TRUE)), air_time, distance) %>%
     mutate(blah = distance / air_time)
 
 # matches() <- all columns named with 'delay'
 flights %>%
     group_by(carrier) %>%
-    summarise_each(funs(max(., na.rm = TRUE),
-                        min(., na.rm = TRUE)),
+    summarise_each(list(~max(., na.rm = TRUE),
+                        ~min(., na.rm = TRUE)),
                    matches('delay'))
 
 # n()                   <- counts the number of rows in a group
@@ -49,10 +50,11 @@ flights %>%
 # origin variable
 flights %>%
     group_by(dest) %>%
-    select(origin) %>%
+    select(dest, origin) %>%
     table()
-    head()
-    
+
+# same as above
+table(flights$dest, flights$origin)
     
 # min_rank()    <- rank column values
 # lag()         <- take previous row's value
@@ -79,7 +81,7 @@ summary(flights)
 
 # Show sum of NAs each column
 flights %>%
-    map_df(~sum(is.na(.)))
+    map(~sum(is.na(.)))
 
 flights %>%
     summarise_all(mean)
@@ -94,4 +96,3 @@ flights %>%
 
 flights %>%
 	mutate_at(vars(one_of(month.abb[1:3])), mean_val = mean)
-
