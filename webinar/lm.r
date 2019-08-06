@@ -8,21 +8,13 @@ glimpse(airquality)
 summary(airquality)
 names  (airquality)
 
-# plotting
-
-# base R
-plot(Ozone~Solar.R, airquality)
-abline(h = mean_ozone)
-
-# ggplot
-ggplot(airquality, aes(x = Solar.R, y = Ozone)) +
-    geom_point(aes(color = Month))
-
-
 # calculation
 mean_ozone <- mean(airquality$Ozone, na.rm = T)
 mean_ozone
 
+# plotting
+
+# base R
 # plot with mean of ozone ( using base R plotting function)
 plot(Ozone~Solar.R, airquality)
 abline(h = mean_ozone, col = 'green')
