@@ -30,11 +30,7 @@ df <- df %>%
         sap = as.integer(sap),
         bags = as.integer(bags),
         date = ymd(date),
-        convoy = factor(convoy)
-    )
-
-df <- df %>%
-    mutate(
+        convoy = factor(convoy),
         year = year(date),
         month = month(date),
         day = day(date)
@@ -43,9 +39,7 @@ df <- df %>%
 test <- df %>%
     group_by(year, month, convoy) %>%
     tally() %>%
-    mutate(
-        trip_count = n / 16
-    )
+    mutate(trip_count = n / 16)
 
 test %>%
     ggplot(aes(x = factor(month), y = trip_count)) +
@@ -58,7 +52,6 @@ test %>%
     facet_wrap(~year) +
     theme_minimal()
 
-head(df)
 df %>%
     mutate(
         full_name = paste(first_name, last_name),
@@ -70,4 +63,12 @@ df %>%
     ggplot(aes(fct_reorder(full_name, count), count)) +
     geom_bar(stat = 'identity') +
     coord_flip()
+
+
+# some ugly geom_line chart about trip
+test %>%
+    ggplot(aes(x = factor(month), y = trip_count, 
+               group = convoy, color = convoy)) +
+    geom_line() +
+    facet_wrap(~year)
     
