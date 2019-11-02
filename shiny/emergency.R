@@ -27,10 +27,17 @@ count_top <- function(df, var, n = 5) {
 ui <- fluidPage(
     
     fluidRow(
-        column(6,
-               # setNames function <- shows product name in the UI
-               # returns product code to the server
-               selectInput("code", "Product", setNames(products$code, products$title))
+        column(8,
+           # setNames function <- shows product name in the UI
+           # returns product code to the server
+           selectInput(
+                "code", "Product",
+                choices = setNames(products$code, products$title),
+                width = "100%"
+           )
+        ),
+        column(4,
+            selectInput("y", "Y axis", c("rate", "count"))
         )
     ),
     
@@ -42,6 +49,11 @@ ui <- fluidPage(
     
     fluidRow(
         column(12, plotOutput("age_sex"))
+    ),
+
+    fluidRow(
+        column(2, actionButton("story", "Tell me a story!")),
+        column(10, textOutput("narrative"))
     )
     
 )
@@ -70,10 +82,24 @@ server <- function(input, output, session) {
     })
     
     output$age_sex <- renderPlot({
-        summary() %>%
-            ggplot(aes(age, n.x, color = sex)) +
-            geom_line(na.rm = TRUE) +
-            labs(y = "Estimated number of injuries")
+
+        if (input$y == "count") {
+            summary() %>%
+                ggplot(aes(age, n.x, color = sex)) +
+                geom_line(na.rm = TRUE) +
+                labs(y = "Estimated number of injuries")
+        } else {
+            summary() %>%
+                ggplot(aes(age, rate, color = sex)) +
+                geom_line() +
+                labs(y = "Injuries per 10,000 people")
+        }
+
+    })
+
+    output$narrative <- renderText({
+        input$story
+        selected() %>% pull(narrative) %>% sample(1)
     })
   
 }
