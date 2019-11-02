@@ -41,5 +41,3 @@ summary %>%
 selected %>%
     sample_n(10) %>%
     pull(narrative)
-
-?fct_lump()
