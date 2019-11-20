@@ -7,41 +7,83 @@ library(DT)
 library(rdrop2)
 library(openxlsx)
 
-# dropbox folder name
-outputDir <- "training"
-
-saveData <- function(df) {
-    df <- read_excel(df)
-    fileName <- "data.csv"
-    filePath <- file.path(tempdir(), fileName)
-    write_csv(df, filePath)
-    drop_upload(filePath, path = outputDir)
+manipulator <- function(df) {
+    df <- tail(df, -3)
+    names(df) <- c("SAP", "Full_Name", "Vendor", "blah1", "Course", 1:8)
+    df <- df %>%
+        gather(`1`:`8`, key = 'key', value = 'Expire_Date', na.rm = TRUE) %>%
+        filter(Vendor == 'UMNUGOVI TEEWRIIN NEGDEL LLC') %>%
+        select(1, 2, 5, 7) %>%
+        mutate(
+            SAP = as.integer(SAP),
+            Expire_Date = as.Date(as.integer(Expire_Date), origin = '1899-12-30')
+        )
+    return(df)
 }
 
-
-loadData <- function() {
-    fileInfo <- drop_dir(outputDir)
-    filePath <- fileInfo$path_display
-    data <- drop_read_csv(filePath)
-    data
+expired <- function() {
+    filter(df, Expire_Date < today()) %>%
+    arrange(Expire_Date)
 }
+
+thismonth <- function() {
+    filter(df,
+        month(Expire_Date) == month(today()),
+        year(Expire_Date) == year(today()),
+        Expire_Date > today()
+    ) %>%
+    arrange(Expire_Date)
+}
+
+nextmonth <- function() {
+    filter(df,
+        month(Expire_Date) == month(today()) + 1,
+        year(Expire_Date) == year(today())
+    ) %>%
+    arrange(Expire_Date)
+}
+
+all <- function() {
+    df1 <- expired()
+    df2 <- thismonth()
+    df3 <- nextmonth()
+    df_combined <- rbind(df1, df2, df3)
+    return(df_combined)
+}
+
 
 function(input, output, session) {
     
-    output$mainTable <- renderDataTable(datatable({
-        req(input$datafile)
+    df <- reactive({
+        read_excel(input$expiryFile$datapath)
+    })
+
+    df_dist <- reactive({
+        df() %>% group_by(SAP) %>% tally()
+    })
+
+    tableType <- reactive({
+        switch(input$datetype,
+               expired = expired(),
+               thismonth = thismonth(),
+               nextmonth = nextmonth(),
+               all = all())
+    })
+
+    output$expiryTable <- renderDataTable(datatable({
+        req(input$expiryFile)
         tryCatch(
-            {
-                df <- read_excel(input$datafile$datapath)
-                # saveData(input$datafile$datapath)
-            },
-            error = function(e) {
-                stop(safeError(e))
-            }
+            {df()},
+            error = function(e) {stop(safeError(e))}
         )
-        # manipulate raw excel data here
-        return(df)
-        # return(loadData())
+        result <- manipulator(df())
+        result <- tableType()
+
+        return(result)
     }))
     
+    output$totalEmp <- renderInfoBox({
+        infoBox(value = 100, title = 'Total Employee')
+    })
+
 }
