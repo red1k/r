@@ -4,8 +4,7 @@ library(tidyverse)
 library(rsconnect)
 library(readxl)
 library(DT)
-library(rdrop2)
-library(openxlsx)
+library(lubridate)
 
 manipulator <- function(df) {
     df <- tail(df, -3)
@@ -51,15 +50,13 @@ all <- function() {
     return(df_combined)
 }
 
+df <- read_excel("data.xlsx")
+df <- manipulator(df)
 
 function(input, output, session) {
     
     df <- reactive({
         read_excel(input$expiryFile$datapath)
-    })
-
-    df_dist <- reactive({
-        df() %>% group_by(SAP) %>% tally()
     })
 
     tableType <- reactive({

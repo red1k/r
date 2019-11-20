@@ -4,8 +4,7 @@ library(tidyverse)
 library(rsconnect)
 library(readxl)
 library(DT)
-library(rdrop2)
-library(openxlsx)
+library(lubridate)
 
 dashboardPage(
     dashboardHeader(title = 'SGC Training'),
