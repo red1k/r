@@ -2,3 +2,4 @@
 *.xls
 *.xlsx
 *.Rhistory
+#.dcf
