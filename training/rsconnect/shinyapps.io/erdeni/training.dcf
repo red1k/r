@@ -5,6 +5,6 @@ account: erdeni
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1492599
-bundleId: 2603396
+bundleId: 2606449
 url: https://erdeni.shinyapps.io/training/
-when: 1574248163.50561
+when: 1574324778.3962
