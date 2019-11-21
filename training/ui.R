@@ -38,7 +38,15 @@ dashboardPage(
                                       "All" = "all"
                                     )
                                 ),
-                                width = 2
+                                width = 2,
+                                br(),
+                                radioButtons("company", "Which company:",
+                                    c("SGC" = "UMNUGOVI TEEWRIIN NEGDEL LLC",
+                                      "TERRA" = "TERRA EXPRESS LLC",
+                                      "KBTL" = "KHANBOGD TEEVER LOGISTIC LLC",
+                                      "OLT" = "Other"
+                                    )
+                                )
                             ),
                             mainPanel(
                                 dataTableOutput("expiryTable"),
