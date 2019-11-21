@@ -6,7 +6,7 @@ library(readxl)
 library(DT)
 library(lubridate)
 
-manipulator <- function(df) {
+manipulator <- function(df, vendor) {
     df <- tail(df, -3)
     names(df) <- c("SAP", "Full_Name", "Vendor", "blah1", "Course", 1:8)
     df <- df %>%
