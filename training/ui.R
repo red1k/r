@@ -7,16 +7,19 @@ library(DT)
 library(lubridate)
 
 dashboardPage(
-    dashboardHeader(title = 'SGC Training'),
+    dashboardHeader(title = 'Training Dashboard'),
     dashboardSidebar(
         sidebarMenu(
-            menuItem("Expiration Date", tabName = "expiry"),
-            menuItem("Course Table", tabName = "course"),
-            menuItem("About", tabName = "about")
+            menuItem("Expiration Date", tabName = "expiry", icon = icon("chart-bar")),
+            menuItem("Course Table", tabName = "course", icon = icon("calendar")),
+            menuItem("About", tabName = "about", icon = icon("info"))
         )
     ),
     
     dashboardBody(
+        tags$head(
+            tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
+        ),
         tabItems(
             # expiry information
             tabItem(tabName = "expiry",
@@ -25,8 +28,8 @@ dashboardPage(
                     column(width = 10,
                         # info boxes
                         infoBoxOutput("totalEmp"),
-                        infoBox("Expired Percentage", '98%', icon = icon("calendar")),
-                        infoBox("Another Useful Info", '?'),
+                        infoBoxOutput("totalTraining"),
+                        infoBoxOutput("expiredPercent"),
 
                         # main table box
                         box(title = "Expiry Table", status = "primary", solidHeader = TRUE, width = 12, height = '600px',
@@ -87,10 +90,9 @@ dashboardPage(
             ),
             # ABOUT PAGE
             tabItem(tabName = "about",
-                column(width = 1),
+                column(width = 4),
                 column(width = 8,
-                    p("SGC training dashboard"),
-                    p("Used R shiny, shinydashboard packages")
+                    h3("Used R shiny, shinydashboard packages")
                 )
             )
         )
