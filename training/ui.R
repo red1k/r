@@ -74,7 +74,24 @@ dashboardPage(
                     column(width = 1),
                     column(width = 10,
                         box(title = "Course Information", status = "primary", solidHeader = TRUE, width = 12, height = '600px',
-                            dataTableOutput("courseTable")
+                            sidebarPanel(
+                                radioButtons("location", "Choose:",
+                                    c("UB" = "UB",
+                                      "OT" = "OT Site"
+                                    )
+                                ),
+                                width = 2,
+                                br(),
+                                radioButtons("courseChoice", "Course:",
+                                    c("Top 3" = "mandatory",
+                                      "All" = "allCourse"
+                                    )
+                                )
+                            ),
+                            mainPanel(
+                                dataTableOutput("courseTable"),
+                                width = 10
+                            )
                         )
                     )
                 ),
