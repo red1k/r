@@ -1,10 +1,6 @@
 library(shiny)
 library(shinydashboard)
-library(tidyverse)
-library(rsconnect)
-library(readxl)
 library(DT)
-library(lubridate)
 
 dashboardPage(
     dashboardHeader(title = 'Training Dashboard'),
@@ -32,7 +28,7 @@ dashboardPage(
                         infoBoxOutput("expiredPercent"),
 
                         # main table box
-                        box(title = "Expiry Table", status = "primary", solidHeader = TRUE, width = 12, height = '600px',
+                        box(title = "Expiry Table", status = "primary", solidHeader = TRUE, width = 12,
                             sidebarPanel(
                                 radioButtons("datetype", "Choose:",
                                     c("Expired" = "expired",
@@ -73,7 +69,7 @@ dashboardPage(
                 fluidRow(
                     column(width = 1),
                     column(width = 10,
-                        box(title = "Course Information", status = "primary", solidHeader = TRUE, width = 12, height = '600px',
+                        box(title = "Course Information", status = "primary", solidHeader = TRUE, width = 12,
                             sidebarPanel(
                                 radioButtons("location", "Choose:",
                                     c("UB" = "UB",

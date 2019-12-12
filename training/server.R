@@ -1,10 +1,7 @@
 library(shiny)
 library(shinydashboard)
-library(tidyverse)
-library(rsconnect)
-library(readxl)
 library(DT)
-library(lubridate)
+library(rsconnect)
 source('func.R')
 
 
@@ -21,36 +18,58 @@ function(input, output, session) {
     whichCourse      <- reactive({input$courseChoice})
     
     # EXPIRY TABLE ####################################
-    output$expiryTable <- renderDataTable(datatable({
-        req(input$expiryFile)
-        tryCatch(
-            {expiryDateRaw()},
-            error = function(e) {stop(safeError(e))}
-        )
-        final <- expiryDateClean() %>%
-            groupByVendor(vendor()) %>% 
-            groupByDate(dateType()) %>%
-            select(1, 2, 4, 5)
-        
-        return(final)
-    }))
+    output$expiryTable <- renderDT(
+        datatable(
+            {
+                req(input$expiryFile)
+                tryCatch(
+                    {expiryDateRaw()},
+                    error = function(e) {stop(safeError(e))}
+                )
+                final <- expiryDateClean() %>%
+                    groupByVendor(vendor()) %>%
+                    groupByDate(dateType()) %>%
+                    select(1, 2, 4, 5)
+
+                return(final)
+            }
+        ),
+        extensions = c("Buttons", "Responsive"),
+        options = list(
+            dom = 'Bfrtip',
+            buttons = c('print', 'excel', 'pdf', 'csv')
+        ),
+        selection = 'single',
+        server = FALSE
+    )
     
     # COURSE TABLE ####################################
-    output$courseTable <- renderDataTable(datatable({
-        req(input$courseFile)
-        tryCatch(
-            {courseDataRaw()},
-            error = function(e) {stop(safeError(e))}
-        )
-        final <- courseDataClean() %>%
-            whichLocation(location = location())
+    output$courseTable <- renderDataTable(
+        datatable(
+            {
+                req(input$courseFile)
+                tryCatch(
+                    {courseDataRaw()},
+                    error = function(e) {stop(safeError(e))}
+                )
+                final <- courseDataClean() %>%
+                    whichLocation(location = location())
 
-        if (whichCourse() == 'mandatory') {
-            final <- mandatoryCourses(final)
-        }
+                if (whichCourse() == 'mandatory') {
+                    final <- mandatoryCourses(final)
+                }
 
-        return(select(final, 1:3, 5:8))
-    }))
+                return(select(final, 1:2, 5:8))
+            }
+        ),
+        extensions = c("Buttons", "Responsive"),
+        options = list(
+            dom = 'Bfrtip',
+            buttons = c('print', 'excel', 'pdf', 'csv')
+        ),
+        selection = 'single',
+        server = FALSE
+    )
 
     # INFO BOXES ######################################
     totalEmployee <- reactive({
