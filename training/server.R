@@ -19,21 +19,19 @@ function(input, output, session) {
     
     # EXPIRY TABLE ####################################
     output$expiryTable <- renderDT(
-        datatable(
-            {
-                req(input$expiryFile)
-                tryCatch(
-                    {expiryDateRaw()},
-                    error = function(e) {stop(safeError(e))}
-                )
-                final <- expiryDateClean() %>%
-                    groupByVendor(vendor()) %>%
-                    groupByDate(dateType()) %>%
-                    select(1, 2, 4, 5)
+        datatable({
+			req(input$expiryFile)
+			tryCatch(
+				{expiryDateRaw()},
+				error = function(e) {stop(safeError(e))}
+			)
+			final <- expiryDateClean() %>%
+				groupByVendor(vendor()) %>%
+				groupByDate(dateType()) %>%
+				select(1, 2, 4, 5)
 
-                return(final)
-            }
-        ),
+			return(final)
+		}),
         extensions = c("Buttons", "Responsive"),
         options = list(
             dom = 'Bfrtip',
@@ -45,23 +43,21 @@ function(input, output, session) {
     
     # COURSE TABLE ####################################
     output$courseTable <- renderDataTable(
-        datatable(
-            {
-                req(input$courseFile)
-                tryCatch(
-                    {courseDataRaw()},
-                    error = function(e) {stop(safeError(e))}
-                )
-                final <- courseDataClean() %>%
-                    whichLocation(location = location())
+        datatable({
+			req(input$courseFile)
+			tryCatch(
+				{courseDataRaw()},
+				error = function(e) {stop(safeError(e))}
+			)
+			final <- courseDataClean() %>%
+				whichLocation(location = location())
 
-                if (whichCourse() == 'mandatory') {
-                    final <- mandatoryCourses(final)
-                }
+			if (whichCourse() == 'mandatory') {
+				final <- mandatoryCourses(final)
+			}
 
-                return(select(final, 1:2, 5:8))
-            }
-        ),
+			return(select(final, 1:2, 5:8))
+        }),
         extensions = c("Buttons", "Responsive"),
         options = list(
             dom = 'Bfrtip',
