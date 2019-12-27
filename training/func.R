@@ -50,8 +50,8 @@ thismonth <- function(df) {
 
 nextmonth <- function(df) {
     filter(df,
-        month(Expire_Date) == month(today()) + 1,
-        year(Expire_Date) == year(today())
+        month(Expire_Date) == if_else(month(today()) == 12, 1, month(today()) + 1),
+        year(Expire_Date) == if_else(month(today()) == 12, year(today()) + 1, year(today()))
     )
 }
 
