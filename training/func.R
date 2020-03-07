@@ -1,25 +1,7 @@
 library(tidyverse)
 library(readxl)
 library(lubridate)
-
-manipulator <- function(df) {
-    df <- tail(df, -3)
-    names(df) <- c("SAP", "Full_Name", "Vendor", "blah1", "Course", 1:8)
-    
-    df$Vendor <- str_replace(df$Vendor, "Not assigned", "Other")
-    df$Vendor <- str_replace(df$Vendor, "CENTRAL ASIAN MINING LOGI", "Other")
-    df$Vendor <- str_replace(df$Vendor, "SPECIALIZED CAREER CONSULTING LLC", "Other")
-    
-    df <- df %>%
-        gather(`1`:`8`, key = 'key', value = 'Expire_Date', na.rm = TRUE) %>%
-        select(1, 2, 3, 5, 7) %>%
-        mutate(
-            SAP = as.integer(SAP),
-            Expire_Date = as.Date(as.integer(Expire_Date), origin = '1899-12-30')
-        ) %>%
-        arrange(Expire_Date)
-    return(df)
-}
+library(RSQLite)
 
 coursera <- function(df) {
     df$Date <- date(df$`Start Date`)
@@ -81,4 +63,16 @@ whichLocation <- function(df, location) {
 
 mandatoryCourses <- function(df) {
     return(filter(df, str_detect(Course, "OT Induction|Pretask|CRM for team|Personal Lockholder")))
+}
+
+db_data <- function() {
+    db <- dbConnect(SQLite(), "tables.db")
+    raw <- dbReadTable(db, 'expirydate')
+
+    raw$Expire_Date = as.Date(as.integer(raw$Expire_Date), origin = '1899-12-30')
+    raw$Vendor <- str_replace(raw$Vendor, "Not assigned", "Other")
+    raw$Vendor <- str_replace(raw$Vendor, "CENTRAL ASIAN MINING LOGI", "Other")
+    raw$Vendor <- str_replace(raw$Vendor, "SPECIALIZED CAREER CONSULTING LLC", "Other")
+
+    return(arrange(raw, Expire_Date))
 }

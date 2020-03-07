@@ -2,13 +2,13 @@ library(shiny)
 library(shinydashboard)
 library(DT)
 library(rsconnect)
+library(RSQLite)
 source('func.R')
 
 
 function(input, output, session) {
     
-    expiryDateRaw    <- reactive({read_excel(input$expiryFile$datapath)})
-    expiryDateClean  <- reactive({manipulator(expiryDateRaw())})
+    database_table   <- reactive({db_data()})
     vendor           <- reactive({input$company})
     dateType         <- reactive({input$datetype})
 
@@ -20,16 +20,10 @@ function(input, output, session) {
     # EXPIRY TABLE ####################################
     output$expiryTable <- renderDT(
         datatable({
-			req(input$expiryFile)
-			tryCatch(
-				{expiryDateRaw()},
-				error = function(e) {stop(safeError(e))}
-			)
-			final <- expiryDateClean() %>%
+			final <- database_table() %>%
 				groupByVendor(vendor()) %>%
 				groupByDate(dateType()) %>%
 				select(1, 2, 4, 5)
-
 			return(final)
 		}),
         extensions = c("Buttons", "Responsive"),
@@ -38,7 +32,8 @@ function(input, output, session) {
             buttons = c('print', 'excel', 'pdf', 'csv')
         ),
         selection = 'single',
-        server = FALSE
+        server = FALSE,
+		editable = TRUE
     )
     
     # COURSE TABLE ####################################
@@ -69,8 +64,7 @@ function(input, output, session) {
 
     # INFO BOXES ######################################
     totalEmployee <- reactive({
-        validate(need(input$expiryFile != "", "Waiting for excel file..."))
-        total <- expiryDateClean() %>%
+        total <- database_table() %>%
             groupByVendor(vendor()) %>% 
             group_by(SAP) %>%
             tally()
@@ -78,16 +72,14 @@ function(input, output, session) {
     })
     
     totalTraining <- reactive({
-        validate(need(input$expiryFile != "", "Waiting for excel file..."))
-        total <- expiryDateClean() %>%
+        total <- database_table() %>%
             groupByVendor(vendor()) %>%
             nrow()
         return(total)
     })
     
     totalExpired <- reactive({
-        validate(need(input$expiryFile != "", "Waiting for excel file..."))
-        total <- expiryDateClean() %>%
+        total <- database_table() %>%
             groupByVendor(vendor()) %>%
             groupByDate("expired") %>%
             nrow()
